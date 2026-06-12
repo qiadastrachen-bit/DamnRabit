@@ -1,0 +1,74 @@
+/* ===== 每章背景主角 ===== */
+.chapter__hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.6s ease;
+}
+
+.chapter-hero-canvas {
+  position: absolute;
+  left: 8%;
+  bottom: 8%;
+  height: min(55vh, 420px);
+  width: auto;
+  aspect-ratio: 96 / 128;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 0 28px rgba(248, 238, 184, 0.25));
+  transition: transform 0.4s ease, opacity 0.5s ease;
+}
+
+.chapter--cover .chapter-hero-canvas {
+  left: 50%;
+  bottom: 15%;
+  transform: translateX(-60%) !important;
+  opacity: 0.85;
+}
+
+.chapter--prologue .chapter-hero-canvas {
+  left: 6%;
+  filter: drop-shadow(0 0 20px rgba(107, 154, 104, 0.2));
+}
+
+.chapter--ch1 .chapter-hero-canvas {
+  filter: drop-shadow(0 0 22px rgba(122, 154, 176, 0.25));
+}
+
+.chapter--ch2 .chapter-hero-canvas {
+  left: 10%;
+  filter: drop-shadow(0 0 22px rgba(154, 122, 176, 0.25));
+}
+
+.chapter--ch3 .chapter-hero-canvas {
+  filter: drop-shadow(0 0 22px rgba(200, 168, 96, 0.28));
+}
+
+.chapter--ending .chapter-hero-canvas {
+  left: 12%;
+  filter: drop-shadow(0 0 30px rgba(248, 238, 184, 0.35));
+}
+
+/* 行走主角层 — 更高可见度 */
+
+#heroCanvas {
+  filter:
+    drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85))
+    drop-shadow(0 0 28px rgba(248, 238, 184, 0.45))
+    drop-shadow(0 0 6px rgba(255, 255, 255, 0.15));
+}
+
+@media (max-width: 900px) {
+  .chapter-hero-canvas {
+    left: 4%;
+    height: min(40vh, 280px);
+    opacity: 1;
+  }
+
+  .chapter--cover .chapter-hero-canvas {
+    left: 50%;
+    bottom: 10%;
+  }
+}

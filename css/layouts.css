@@ -1,0 +1,536 @@
+/* ===== 双栏 & 多样排版 ===== */
+
+.chapter__grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(300px, 1.1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10vh clamp(1.5rem, 5vw, 4rem) 10vh clamp(4rem, 8vw, 6rem);
+  min-height: 100vh;
+}
+
+/* 布局变体 */
+.layout--split .chapter__grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.layout--reverse .chapter__grid {
+  direction: rtl;
+}
+.layout--reverse .chapter__grid > * {
+  direction: ltr;
+}
+
+.layout--offset .chapter__content {
+  margin-top: 8vh;
+}
+.layout--offset .chapter__aside {
+  margin-bottom: 6vh;
+}
+
+.layout--stack .chapter__grid {
+  grid-template-columns: 1fr;
+  max-width: 720px;
+  text-align: center;
+}
+.layout--stack .chapter__aside {
+  order: -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.layout--wide .chapter__grid {
+  grid-template-columns: 0.9fr 1.2fr;
+  max-width: 1280px;
+}
+
+/* ===== 左侧边栏 ===== */
+.chapter__aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  pointer-events: auto;
+}
+
+.chapter__aside-label {
+  font-family: var(--pixel-font);
+  font-size: var(--pixel-sm, 0.68rem);
+  color: var(--accent-mist);
+  letter-spacing: 0.25em;
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+
+.chapter__aside.is-visible .chapter__aside-label,
+[data-aside-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 像素场景画框 */
+.pixel-scene {
+  position: relative;
+  height: 140px;
+  border: 3px solid rgba(212, 184, 106, 0.25);
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  image-rendering: pixelated;
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+  transition: opacity 0.7s, transform 0.7s;
+}
+
+[data-aside-reveal].is-visible .pixel-scene,
+.chapter__aside.is-visible .pixel-scene {
+  opacity: 1;
+  transform: none;
+}
+
+.pixel-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 6px
+  );
+  pointer-events: none;
+}
+
+.pixel-scene--forest {
+  background:
+    radial-gradient(ellipse 40px 30px at 25% 75%, #1e2830 0%, transparent 100%),
+    radial-gradient(ellipse 50px 35px at 55% 70%, #243028 0%, transparent 100%),
+    radial-gradient(ellipse 35px 28px at 80% 78%, #1a2028 0%, transparent 100%),
+    linear-gradient(180deg, #141c20 0%, #0c1014 60%, #1a1420 100%);
+}
+.pixel-scene--forest::before {
+  content: '';
+  position: absolute;
+  bottom: 20px;
+  left: 30%;
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle, #f8eeb8 30%, #f0c848 60%, transparent 70%);
+  box-shadow: 0 0 20px rgba(248, 238, 184, 0.5);
+  animation: egg-glow 3s ease-in-out infinite;
+}
+
+.pixel-scene--paths {
+  background: linear-gradient(180deg, #101820 0%, #1a2030 100%);
+}
+.pixel-scene--paths .path-line {
+  position: absolute;
+  bottom: 30px;
+  height: 3px;
+  background: rgba(122, 154, 176, 0.4);
+}
+.pixel-scene--paths .path-line--l { left: 15%; width: 28%; transform: rotate(-12deg); }
+.pixel-scene--paths .path-line--m { left: 38%; width: 24%; }
+.pixel-scene--paths .path-line--r { right: 15%; width: 28%; transform: rotate(12deg); }
+.pixel-scene--paths .path-sign {
+  position: absolute;
+  font-family: var(--pixel-font);
+  font-size: 0.5rem;
+  color: var(--accent-gold);
+  bottom: 40px;
+}
+.pixel-scene--paths .path-sign--l { left: 12%; }
+.pixel-scene--paths .path-sign--m { left: 42%; }
+.pixel-scene--paths .path-sign--r { right: 12%; }
+
+.pixel-scene--castle {
+  background: linear-gradient(0deg, #1a1028 0%, #100c18 100%);
+}
+.pixel-scene--castle::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  width: 80px;
+  height: 60px;
+  background:
+    linear-gradient(#3a3048 0 0) 10px 0 / 60px 40px no-repeat,
+    linear-gradient(#5a4868 0 0) 0 35px / 80px 8px no-repeat;
+}
+
+.pixel-scene--wheat {
+  background: linear-gradient(180deg, #2a2018 0%, #1a140c 100%);
+}
+.pixel-scene--wheat .wheat-stalk {
+  position: absolute;
+  bottom: 10px;
+  width: 3px;
+  height: 50px;
+  background: linear-gradient(180deg, #c8b878, #908050);
+  transform-origin: bottom center;
+  animation: wheat-sway 4s ease-in-out infinite;
+}
+.pixel-scene--wheat .wheat-stalk:nth-child(1) { left: 10%; animation-delay: 0s; }
+.pixel-scene--wheat .wheat-stalk:nth-child(2) { left: 25%; height: 60px; animation-delay: 0.5s; }
+.pixel-scene--wheat .wheat-stalk:nth-child(3) { left: 40%; animation-delay: 1s; }
+.pixel-scene--wheat .wheat-stalk:nth-child(4) { left: 55%; height: 55px; animation-delay: 0.3s; }
+.pixel-scene--wheat .wheat-stalk:nth-child(5) { left: 70%; animation-delay: 0.8s; }
+.pixel-scene--wheat .wheat-stalk:nth-child(6) { left: 85%; height: 45px; animation-delay: 1.2s; }
+
+@keyframes wheat-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes egg-glow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* 迷你故事卡 */
+.mini-tale {
+  padding: 1rem 1.1rem;
+  border-left: 4px solid var(--tale-accent, var(--accent-gold));
+  background: rgba(14, 10, 20, 0.65);
+  opacity: 0;
+  transform: translateX(-16px);
+  transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s;
+}
+
+.mini-tale:nth-child(2) { transition-delay: 0.15s; }
+.mini-tale:nth-child(3) { transition-delay: 0.3s; }
+.mini-tale:nth-child(4) { transition-delay: 0.45s; }
+
+.chapter__aside.is-visible .mini-tale,
+[data-aside-reveal].is-visible .mini-tale {
+  opacity: 1;
+  transform: none;
+}
+
+.mini-tale--cycle {
+  cursor: pointer;
+  border-style: dashed;
+}
+.mini-tale--cycle:hover {
+  background: rgba(212, 184, 106, 0.08);
+  border-color: var(--accent-gold);
+}
+
+.mini-tale.is-read {
+  border-left-style: solid;
+}
+
+.mini-tale__label {
+  display: block;
+  font-family: var(--pixel-font);
+  font-size: var(--pixel-xs, 0.58rem);
+  color: var(--tale-accent, var(--accent-blood));
+  margin-bottom: 0.5em;
+  letter-spacing: 0.08em;
+}
+
+.mini-tale__body {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--text-pale);
+  font-style: italic;
+}
+
+.mini-tale__body.is-flip {
+  animation: tale-flip 0.35s ease;
+}
+
+@keyframes tale-flip {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.mini-tale__hint {
+  display: block;
+  margin-top: 0.5em;
+  font-family: var(--pixel-font);
+  font-size: var(--pixel-xs, 0.58rem);
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+/* 竖排引语 */
+.pull-quote {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 1.25rem;
+  color: var(--accent-mist);
+  letter-spacing: 0.2em;
+  padding: 1rem 0.5rem;
+  border-right: 2px solid rgba(122, 154, 176, 0.35);
+  align-self: flex-start;
+  max-height: 200px;
+  opacity: 0;
+  transition: opacity 0.8s 0.2s;
+}
+
+.chapter__aside.is-visible .pull-quote,
+[data-aside-reveal].is-visible .pull-quote {
+  opacity: 1;
+}
+
+/* 像素贴纸 */
+.pixel-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55em 0.9em;
+  font-family: var(--pixel-font);
+  font-size: var(--pixel-xs, 0.58rem);
+  border: 2px solid;
+  align-self: flex-start;
+}
+
+.pixel-sticker--egg { color: #f0c848; border-color: #f0c848; background: rgba(240,200,72,0.08); }
+.pixel-sticker--moss { color: #6b9a68; border-color: #6b9a68; background: rgba(107,154,104,0.08); }
+.pixel-sticker--star { color: #f8eeb8; border-color: #d4b86a; background: rgba(212,184,106,0.08); }
+
+/* 主内容区排版变体 */
+.chapter__content--card {
+  padding: 2rem;
+  background: rgba(14, 10, 20, 0.55);
+  border: 2px solid rgba(212, 184, 106, 0.15);
+  box-shadow: 8px 8px 0 rgba(107, 48, 72, 0.15);
+}
+
+.chapter__content--ribbon .chapter__heading {
+  display: inline-block;
+  padding: 0.3em 0.8em;
+  background: rgba(107, 48, 72, 0.25);
+  border-left: 4px solid var(--accent-blood);
+}
+
+.story-text--highlight p:nth-child(2) {
+  padding: 0.8em 1em;
+  background: rgba(122, 154, 176, 0.08);
+  border-radius: 2px;
+  color: var(--accent-mist);
+}
+
+.story-text--stagger p:nth-child(odd) { padding-left: 0; }
+.story-text--stagger p:nth-child(even) { padding-left: 1.5em; color: #d8d0c4; }
+
+/* 封面侧边装饰 */
+.cover-aside-deco {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cover-aside-deco--left {
+  left: 8%;
+  top: 25%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cover-aside-deco--right {
+  right: 8%;
+  top: 30%;
+}
+
+.cover-fragment {
+  font-family: var(--pixel-font);
+  font-size: clamp(0.55rem, 1.2vw, 0.72rem);
+  color: rgba(200, 192, 180, 0.75);
+  padding: 0.8em 1em;
+  border: 2px dashed rgba(154, 142, 158, 0.35);
+  max-width: 200px;
+  line-height: 2;
+  animation: float-fragment 6s ease-in-out infinite;
+}
+
+.cover-fragment:nth-child(2) { animation-delay: 1s; color: rgba(212, 184, 106, 0.4); }
+.cover-fragment:nth-child(3) { animation-delay: 2s; }
+
+@keyframes float-fragment {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* 章节主题色 */
+.chapter--prologue { --tale-accent: #6b9a68; }
+.chapter--ch1 { --tale-accent: #7a9ab0; }
+
+/* ===== 第一章岔路背景画 ===== */
+.path-bg-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  opacity: 0;
+  transition: opacity 0.7s ease, filter 0.5s ease;
+  pointer-events: none;
+}
+
+.path-bg-canvas.is-visible {
+  opacity: 0.92;
+}
+
+.path-bg-canvas.is-switching {
+  opacity: 0.2;
+  filter: blur(2px);
+}
+
+.path-bg-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(8,6,14,0.5) 0%, transparent 35%, transparent 65%, rgba(8,6,14,0.45) 100%),
+    linear-gradient(180deg, transparent 50%, rgba(8,6,14,0.55) 100%);
+}
+
+.chapter--ch1[data-selected-path="castle"] { --tale-accent: #9a7ab0; }
+.chapter--ch1[data-selected-path="well"] { --tale-accent: #7a9ab0; }
+.chapter--ch1[data-selected-path="field"] { --tale-accent: #c8a860; }
+
+.chapter--ch1[data-selected-path] .chapter__bg--mist {
+  opacity: 0.15;
+  transition: opacity 0.6s;
+}
+
+.chapter--ch1[data-selected-path="castle"] .path-btn[data-path="castle"].is-selected {
+  border-color: #9a7ab0;
+  background: rgba(154, 122, 176, 0.18);
+  box-shadow: 0 0 20px rgba(154, 122, 176, 0.25);
+}
+
+.chapter--ch1[data-selected-path="well"] .path-btn[data-path="well"].is-selected {
+  border-color: #7a9ab0;
+  background: rgba(122, 154, 176, 0.18);
+  box-shadow: 0 0 20px rgba(122, 154, 176, 0.25);
+}
+
+.chapter--ch1[data-selected-path="field"] .path-btn[data-path="field"].is-selected {
+  border-color: #c8a860;
+  background: rgba(200, 168, 96, 0.18);
+  box-shadow: 0 0 20px rgba(200, 168, 96, 0.25);
+}
+
+/* 侧边舆图随路径变色 */
+.pixel-scene--paths.pixel-scene--paths-active-castle {
+  border-color: rgba(154, 122, 176, 0.5);
+  box-shadow: inset 0 0 30px rgba(154, 122, 176, 0.15);
+}
+.pixel-scene--paths.pixel-scene--paths-active-well {
+  border-color: rgba(122, 154, 176, 0.5);
+  box-shadow: inset 0 0 30px rgba(122, 154, 176, 0.15);
+}
+.pixel-scene--paths.pixel-scene--paths-active-field {
+  border-color: rgba(200, 168, 96, 0.5);
+  box-shadow: inset 0 0 30px rgba(200, 168, 96, 0.15);
+}
+
+.pixel-scene--paths-active-castle .path-sign--l { color: #c8a8e0; }
+.pixel-scene--paths-active-well .path-sign--m { color: #a8c8e0; }
+.pixel-scene--paths-active-field .path-sign--r { color: #f0d878; }
+
+.chapter--ch1 .mini-tale:not(.mini-tale--cycle) .mini-tale__body {
+  transition: opacity 0.3s ease;
+}
+.chapter--ch2 { --tale-accent: #9a7ab0; }
+.chapter--ch3 { --tale-accent: #c8b878; }
+.chapter--ending { --tale-accent: #f0c848; }
+
+/* 主角舞台区（左侧） */
+.hero-stage {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 38%;
+  height: 100%;
+  z-index: 70;
+  pointer-events: none;
+  border-right: 1px dashed rgba(212, 184, 106, 0.08);
+}
+
+.hero-stage__label {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--pixel-font);
+  font-size: var(--pixel-xs, 0.58rem);
+  color: rgba(154, 142, 158, 0.35);
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
+
+.hero-stage__hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 11rem;
+  margin: 0;
+  padding: 0.65em 0.85em;
+  font-family: 'ZCOOL KuaiLe', 'Microsoft YaHei', sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(248, 238, 184, 0.72);
+  text-align: center;
+  background: rgba(14, 10, 20, 0.45);
+  border: 1px dashed rgba(212, 184, 106, 0.22);
+  pointer-events: none;
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
+}
+
+.hero-stage__hint[data-level="almost"],
+.hero-stage__hint[data-level="touch"] {
+  color: #f8eeb8;
+  border-color: rgba(212, 184, 106, 0.55);
+  background: rgba(14, 10, 20, 0.65);
+}
+
+.hero-stage__hint[data-level="wave"] {
+  color: #d4b86a;
+  border-color: rgba(212, 184, 106, 0.7);
+}
+
+.hero-stage__hint[data-level="near"] {
+  color: rgba(200, 220, 240, 0.85);
+}
+
+/* 响应式 */
+@media (max-width: 900px) {
+  .chapter__grid {
+    grid-template-columns: 1fr;
+    padding: 8vh 1.5rem 8vh 3.5rem;
+    gap: 2rem;
+  }
+
+  .layout--reverse .chapter__grid { direction: ltr; }
+
+  .chapter__aside {
+    order: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .mini-tale { flex: 1 1 260px; }
+  .pull-quote {
+    writing-mode: horizontal-tb;
+    border-right: none;
+    border-bottom: 2px solid rgba(122, 154, 176, 0.35);
+    max-height: none;
+  }
+
+  .cover-aside-deco { display: none; }
+  .hero-stage { width: 100%; }
+}
