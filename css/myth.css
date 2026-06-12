@@ -1,0 +1,374 @@
+/* ===== 神话视觉层 ===== */
+
+:root {
+  --myth-font: 'Ma Shan Zheng', 'ZCOOL KuaiLe', cursive;
+  --chapter-glow: rgba(212, 184, 106, 0.15);
+}
+
+body[data-chapter="0"] { --chapter-glow: rgba(212, 184, 106, 0.18); --chapter-mist: #1e1428; }
+body[data-chapter="1"] { --chapter-glow: rgba(61, 82, 56, 0.28); --chapter-mist: #142018; }
+body[data-chapter="2"] { --chapter-glow: rgba(74, 90, 106, 0.3); --chapter-mist: #121a22; }
+body[data-chapter="3"] { --chapter-glow: rgba(42, 24, 56, 0.32); --chapter-mist: #180e22; }
+body[data-chapter="4"] { --chapter-glow: rgba(200, 184, 120, 0.28); --chapter-mist: #1e1a14; }
+body[data-chapter="5"] { --chapter-glow: rgba(232, 200, 160, 0.3); --chapter-mist: #221c18; }
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 8980;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 40%, var(--chapter-glow) 0%, transparent 55%);
+  transition: background 1.2s ease;
+}
+
+/* ===== 神话铭刻 ===== */
+.myth-inscription--cover,
+.myth-inscription--ending {
+  opacity: 1;
+  transform: none;
+  margin-top: 1.2rem;
+  border-bottom: none;
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+}
+
+.myth-inscription--ending {
+  text-align: center;
+  margin-top: 1.5em;
+  color: rgba(212, 184, 106, 0.5);
+}
+
+.myth-inscription {
+  font-family: var(--myth-font);
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  color: rgba(212, 184, 106, 0.38);
+  letter-spacing: 0.35em;
+  margin: -0.4rem 0 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed rgba(212, 184, 106, 0.15);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+[data-aside-reveal].is-visible .myth-inscription,
+.chapter__aside.is-visible .myth-inscription {
+  opacity: 1;
+  transform: none;
+}
+
+.myth-echo {
+  font-family: var(--story-font);
+  font-size: 0.82rem;
+  color: rgba(200, 184, 140, 0.75);
+  font-style: italic;
+  padding: 0.6em 0.8em;
+  border-left: 2px solid rgba(212, 184, 106, 0.35);
+  margin-top: 0.5rem;
+  animation: myth-echo-in 0.8s ease;
+}
+
+@keyframes myth-echo-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.chapter__aside.myth-unlocked .myth-inscription {
+  color: rgba(212, 184, 106, 0.62);
+  text-shadow: 0 0 20px rgba(212, 184, 106, 0.2);
+}
+
+/* ===== 标题与对话字体 ===== */
+.chapter__heading,
+.chapter__title,
+.chapter__subtitle,
+.story-dialogue,
+.story-ending,
+.pull-quote,
+.cover-fragment {
+  font-family: var(--myth-font);
+  letter-spacing: 0.12em;
+}
+
+.chapter__subtitle {
+  writing-mode: horizontal-tb;
+  letter-spacing: 0.65em;
+}
+
+.story-text {
+  letter-spacing: 0.04em;
+}
+
+/* ===== 书页批注 ===== */
+.book-annotation {
+  position: fixed;
+  right: clamp(0.8rem, 3vw, 2rem);
+  bottom: clamp(4rem, 12vh, 7rem);
+  z-index: 7600;
+  max-width: 220px;
+  padding: 0.9em 1em 0.9em 2.2em;
+  background: rgba(14, 10, 20, 0.88);
+  border: 2px solid rgba(212, 184, 106, 0.35);
+  box-shadow: -4px 4px 0 rgba(107, 48, 72, 0.25);
+  transform: translateX(12px);
+  opacity: 0;
+  transition: opacity 0.4s, transform 0.4s;
+  pointer-events: none;
+}
+
+.book-annotation.is-show {
+  opacity: 1;
+  transform: none;
+}
+
+.book-annotation__sigil {
+  position: absolute;
+  left: 0.55em;
+  top: 0.65em;
+  font-family: var(--myth-font);
+  font-size: 1.1rem;
+  color: rgba(107, 48, 72, 0.8);
+}
+
+.book-annotation__text {
+  font-size: 0.78rem;
+  line-height: 1.75;
+  color: rgba(232, 224, 212, 0.9);
+}
+
+/* ===== 梦屑残页槽 ===== */
+.fragment-bar__label {
+  letter-spacing: 0.2em;
+}
+
+.fragment-slot {
+  width: 14px;
+  height: 20px;
+  border: none;
+  border-radius: 1px 2px 2px 1px;
+  background: rgba(232, 224, 212, 0.08);
+  box-shadow:
+    inset -2px 0 0 rgba(0, 0, 0, 0.2),
+    1px 1px 0 rgba(212, 184, 106, 0.2);
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 88% 100%, 0 100%);
+  position: relative;
+}
+
+.fragment-slot.is-collected {
+  background: linear-gradient(160deg, #e8d8a8 0%, #c8a858 100%);
+  box-shadow: 0 0 10px rgba(212, 184, 106, 0.45);
+}
+
+.fragment-slot.is-collected::after {
+  content: attr(data-verse);
+  position: absolute;
+  top: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--pixel-font);
+  font-size: 0.42rem;
+  color: var(--accent-gold);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fragment-bar:hover .fragment-slot.is-collected::after {
+  opacity: 0.85;
+}
+
+.fragment-mosaic {
+  position: fixed;
+  left: 50%;
+  top: 3.2rem;
+  transform: translateX(-50%) translateY(-8px);
+  z-index: 8100;
+  text-align: center;
+  padding: 0.5em 1.2em;
+  background: rgba(14, 10, 20, 0.75);
+  border: 1px solid rgba(212, 184, 106, 0.3);
+  opacity: 0;
+  transition: opacity 0.8s, transform 0.8s;
+  pointer-events: none;
+}
+
+.fragment-mosaic.is-revealed {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+
+.fragment-mosaic__line {
+  font-family: var(--myth-font);
+  font-size: clamp(0.85rem, 2vw, 1.05rem);
+  color: rgba(212, 184, 106, 0.85);
+  letter-spacing: 0.15em;
+  line-height: 1.8;
+}
+
+/* ===== 绘本边框仪式 ===== */
+.book-frame {
+  transition: border-color 1s, opacity 1s, box-shadow 0.6s;
+  border-color: rgba(212, 184, 106, 0.15);
+  box-shadow: inset 0 0 40px var(--chapter-glow);
+}
+
+body.myth-contract .book-frame {
+  border-color: rgba(248, 238, 184, 0.55);
+  box-shadow: inset 0 0 60px rgba(248, 238, 184, 0.15);
+}
+
+body.chapter-transition .book-frame {
+  border-color: rgba(212, 184, 106, 0.4);
+  animation: frame-char 0.55s ease;
+}
+
+@keyframes frame-char {
+  0%, 100% { filter: none; }
+  40% { filter: sepia(0.25) brightness(1.05); }
+}
+
+.chapter--ending.fragments-complete .book-frame,
+body.fragments-complete .chapter--ending .book-frame {
+  opacity: 0.35;
+}
+
+body.reader-in-story .chapter--ending .book-frame {
+  opacity: 0;
+}
+
+/* ===== 契约瞬间 ===== */
+body.myth-contract {
+  animation: myth-hush 0.34s ease;
+}
+
+@keyframes myth-hush {
+  0%, 100% { filter: none; }
+  50% { filter: brightness(1.08) saturate(1.05); }
+}
+
+.hero-layer.myth-contract-pulse {
+  filter: brightness(1.45) contrast(1.12) saturate(1.08) !important;
+}
+
+body.myth-contract .crt-overlay {
+  opacity: 0.35;
+}
+
+/* ===== 章节导航爪印 ===== */
+.chapter-nav__dot.is-visited:not(.is-active) {
+  border-color: rgba(212, 184, 106, 0.25);
+}
+
+body.fragments-complete .chapter-nav__dot.is-claw span {
+  font-family: var(--myth-font);
+  font-size: 0.95rem;
+}
+
+body.fragments-complete .chapter-nav__dot.is-claw.is-active {
+  box-shadow: 0 0 14px rgba(212, 184, 106, 0.5);
+}
+
+body.fragments-complete .chapter-nav__dot.is-claw.is-active::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px dashed rgba(212, 184, 106, 0.35);
+  pointer-events: none;
+}
+
+.chapter-nav__dot {
+  position: relative;
+}
+
+/* ===== 符文道具 ===== */
+.prop-label {
+  font-family: var(--myth-font);
+  font-size: 1.15rem;
+  letter-spacing: 0;
+  color: rgba(248, 238, 184, 0.75);
+  text-shadow: 0 0 12px rgba(212, 184, 106, 0.4);
+}
+
+.scene-prop.is-discovered .prop-label {
+  color: var(--accent-gold);
+}
+
+/* ===== 章中梦戏入口 ===== */
+.chapter-mini-btn {
+  font-family: var(--pixel-font);
+  letter-spacing: 0.12em;
+}
+
+.chapter-mini-btn::before {
+  content: '◈ ';
+  color: rgba(122, 154, 176, 0.9);
+}
+
+/* ===== 岔路回响 ===== */
+.path-echo {
+  font-family: var(--myth-font);
+  font-size: 0.95rem;
+  color: rgba(200, 184, 140, 0.7);
+  margin-top: 0.8em;
+  padding: 0.5em 0 0.5em 1em;
+  border-left: 2px solid rgba(154, 120, 176, 0.4);
+  animation: myth-echo-in 0.6s ease;
+}
+
+.path-echo--field {
+  border-left-color: rgba(200, 160, 80, 0.45);
+}
+
+/* ===== 靠近提示诗意化 ===== */
+.hero-stage__hint[data-level="touch"] { color: rgba(248, 238, 184, 0.9); }
+.hero-stage__hint[data-level="wave"] { color: rgba(212, 184, 106, 0.85); }
+
+/* ===== HUD 叙事化 ===== */
+.hud-hint {
+  font-family: var(--story-font);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  font-style: italic;
+}
+
+.hud-btn--game::after {
+  content: '梦戏';
+  position: absolute;
+  bottom: -1.1em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--pixel-font);
+  font-size: 0.38rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.hud-btn--game {
+  position: relative;
+}
+
+.hud-btn--game:hover::after {
+  opacity: 0.8;
+}
+
+.footer-logo {
+  opacity: 0.45;
+  transition: opacity 0.4s;
+}
+
+body.fragments-complete .footer-logo,
+body.reader-in-story .footer-logo {
+  opacity: 1;
+}
+
+/* ===== 终章读者入书 ===== */
+body.reader-in-story .hero-layer {
+  filter: brightness(1.35) drop-shadow(0 0 20px rgba(248, 238, 184, 0.4)) !important;
+}
+
+body.reader-in-story .chapter--ending .story-ending {
+  color: #f8eeb8;
+  text-shadow: 0 0 24px rgba(212, 184, 106, 0.35);
+}

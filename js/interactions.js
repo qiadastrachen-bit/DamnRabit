@@ -1,12 +1,12 @@
 const StoryInteractions = (() => {
-  const DIALOGUES = [
-    '……别盯着我的眼睛。蛋会害羞的。',
-    '你听见了吗？风里有翻书的声音。',
-    '我不是迷路了。是故事需要一个人把它走完。',
-    '兔子说，恐惧长得像一只没有脸的王。',
-    '每一百年醒来一次，其实挺累的。但故事总得有人读。',
-    '你收集的碎片……是某页童话掉落的字。',
-    '嘘。井底有人在念你的名字。',
+  const WORLD_WHISPERS = [
+    '风里有翻书声。不是风在翻，是某页童话在翻自己。',
+    '苔藓记得每一个踩碎童话的人。它也在等你。',
+    '井壁回响的不是水声，是被泡软的结局。',
+    '镜面的裂痕，是镜子试图说出真相。',
+    '麦芒划过指尖，像一行未写完的句子。',
+    '月亮缺的那一角，变成了她头顶的白蛋。',
+    '空白书页上的爪印，比任何结局都古老。',
   ];
 
   const PATH_TEXTS = {
@@ -16,11 +16,11 @@ const StoryInteractions = (() => {
   };
 
   const SECRETS = {
-    mushroom: { text: '蘑菇伞下藏着一行小字：「有毒的童话，才记得住。」', fragment: 0 },
-    well: { text: '井壁回响：「……回来吧，写故事的人。」', fragment: 1 },
-    mirror: { text: '镜中倒影眨了眨眼——比你快半秒。', fragment: 2 },
-    wheat: { text: '麦芒划过指尖，像翻过一页粗糙的旧纸。', fragment: 3 },
-    moon: { text: '月亮缺了一角。那一角变成了蛋。', fragment: 4 },
+    mushroom: { text: '蘑菇伞下渗出一行小字：「有毒的童话，才记得住。」', annotation: '蕈下批注：毒童话方入梦。', fragment: 0 },
+    well: { text: '井壁回响：「……回来吧，写故事的人。」', annotation: '渊壁刻痕：归来者，执笔人。', fragment: 1 },
+    mirror: { text: '镜中倒影眨了眨眼——比你快半秒。', annotation: '鉴裂之处，真相早至半秒。', fragment: 2 },
+    wheat: { text: '麦芒划过指尖，像翻过一页粗糙的旧纸。', annotation: '穗响如铃，风在念你的名字。', fragment: 3 },
+    moon: { text: '月亮缺了一角。那一角变成了蛋。', annotation: '朔缺之角，托于蛋上。', fragment: 4 },
   };
 
   const collected = new Set();
@@ -93,14 +93,14 @@ const StoryInteractions = (() => {
   function collectFragment(idx) {
     if (collected.has(idx)) return;
     collected.add(idx);
-    const slot = els.fragmentBar?.querySelector(`[data-idx="${idx}"]`);
-    slot?.classList.add('is-collected');
+    MythRitual?.onFragmentCollected?.(idx);
     PixelAudio.sfx.collect();
     particles?.burst?.(window.innerWidth * 0.5, window.innerHeight * 0.4, '#F8EEB8');
 
     if (collected.size === 5) {
       els.secretEnding?.removeAttribute('hidden');
-      showSecret('全部碎片集齐！隐藏结局已浮现……');
+      MythRitual?.onAllFragments?.();
+      if (currentChapter() >= 5) MythRitual?.readerRitual?.();
     }
   }
 
@@ -110,7 +110,7 @@ const StoryInteractions = (() => {
     const el = document.querySelector(`[data-secret="${key}"]`)
       || (key === 'moon' ? els.coverMoon : null);
     PropFx?.play?.(key, el, true);
-    showSecret(s.text);
+    MythRitual?.showAnnotation?.(s.annotation || s.text);
     collectFragment(s.fragment);
     shakeHero();
   }
@@ -144,17 +144,14 @@ const StoryInteractions = (() => {
 
     if (kind === 'sticker' && el?.dataset?.cuteFx) {
       const msgs = {
-        moss: '……别踩苔藓，它在哭呢。',
-        egg: '梦遗落在麦芒之间。',
-        star: '星星认得蛋兔的路。',
-        reader: '她向读者挥了挥手。',
-        retry: '愿意再读一遍吗？',
+        moss: '苔藓止住了哭。它为翻页者让出一条路。',
+        egg: '麦芒之间，遗落着未写完的梦。',
+        star: '星屑认得这条路——每一百年亮一次。',
+        reader: '书页沙沙响。有人在最后一页留下了视线。',
+        retry: '再读一遍的约定，比结局更古老。',
       };
       const m = msgs[el.dataset.cuteFx];
-      if (m && CuteEffects.rectCenter) {
-        const { x, y } = CuteEffects.rectCenter(el);
-        CuteEffects.showPop(x, y - 24, m, '#d4b86a');
-      }
+      if (m) MythRitual?.showAnnotation?.(m);
       PixelAudio.sfx.dialogue();
     } else {
       PixelAudio.sfx.dialogue();
@@ -184,6 +181,7 @@ const StoryInteractions = (() => {
     }
 
     PropFx?.highfive?.(secretKey || el?.dataset?.secret || el?.dataset?.cuteFx, el);
+    MythRitual?.contractFreeze?.();
 
     const msgs = {
       mushroom: '蘑菇伞抬起来，和她轻轻碰了碰。',
@@ -204,6 +202,10 @@ const StoryInteractions = (() => {
       CuteEffects.showPop(x, y - 28, m, '#f8eeb8');
     }
 
+    if (key === 'reader' && currentChapter() >= 5) {
+      MythRitual?.readerRitual?.();
+    }
+
     el?.classList.add('is-highfive');
     document.getElementById('heroLayer')?.classList.add('hero-highfive');
     PixelAudio.sfx.collect();
@@ -215,8 +217,11 @@ const StoryInteractions = (() => {
 
   function setupHeroClick() {
     els.heroHitbox?.addEventListener('click', () => {
-      const line = DIALOGUES[Math.floor(Math.random() * DIALOGUES.length)];
-      showDialogue(line);
+      const line = WORLD_WHISPERS[Math.floor(Math.random() * WORLD_WHISPERS.length)];
+      MythRitual?.showAnnotation?.(line);
+      heroAnim = 'wave';
+      heroAnimUntil = Date.now() + 900;
+      PixelAudio.sfx.page();
     });
   }
 
@@ -236,6 +241,11 @@ const StoryInteractions = (() => {
         PixelAudio.sfx.choice();
         flash(PATH_FLASH[selectedPath] || PATH_FLASH.well);
         PathBackground?.switchTo?.(selectedPath);
+        MythRitual?.setSelectedPath?.(selectedPath);
+        document.querySelectorAll('[data-path-echo]').forEach(el => {
+          const match = el.classList.contains(`path-echo--${selectedPath}`);
+          el.toggleAttribute('hidden', !match);
+        });
         document.getElementById('pathResult')?.classList.add('is-visible');
       });
     });
@@ -283,7 +293,7 @@ const StoryInteractions = (() => {
         const ch = chapters[idx];
         if (!ch) return;
         PixelAudio.sfx.chapterTransition(idx);
-        flash();
+        flash(MythRitual?.getChapterFlash?.(idx));
         window.scrollTo({ top: ch.offsetTop, behavior: 'smooth' });
       });
     });
@@ -322,7 +332,7 @@ const StoryInteractions = (() => {
       const text = '「故事没有结局。只有翻页的人，愿意再读一遍。」— 《蛋与兔 · 碎梦童话》';
       try {
         await navigator.clipboard.writeText(text);
-        showSecret('童话摘录已复制到剪贴板 ✦');
+        MythRitual?.showAnnotation?.('这句话已留给下一位翻页人。');
       } catch {
         showSecret(text);
       }
@@ -335,8 +345,7 @@ const StoryInteractions = (() => {
         konamiIdx++;
         if (konamiIdx === KONAMI.length) {
           konamiIdx = 0;
-          showSecret('🥚 秘技：蛋兔对你比了个心');
-          showDialogue('谢谢你找到了隐藏的路。其实每一条小径，都通向同一个结局。');
+          MythRitual?.showAnnotation?.('秘径开启：每一条小径，都通向同一个结局。');
           els.secretEnding?.removeAttribute('hidden');
           [0, 1, 2, 3, 4].forEach(i => collectFragment(i));
           PixelAudio.sfx.secret();
@@ -374,7 +383,9 @@ const StoryInteractions = (() => {
 
   function updateNavActive(idx) {
     els.chapterNav?.querySelectorAll('.chapter-nav__dot').forEach(dot => {
-      dot.classList.toggle('is-active', +dot.dataset.target === idx);
+      const target = +dot.dataset.target;
+      dot.classList.toggle('is-active', target === idx);
+      if (target < idx) MythRitual?.markChapterVisited?.(target);
     });
   }
 
@@ -392,6 +403,8 @@ const StoryInteractions = (() => {
 
   function init(particleRef) {
     window.particles = particleRef;
+    MythRitual?.init?.();
+    MythRitual?.setSelectedPath?.('well');
     setupHeroClick();
     setupPathChoices();
     setupSecrets();
@@ -406,7 +419,6 @@ const StoryInteractions = (() => {
 
     els.restartBtn?.addEventListener('click', () => {
       collected.clear();
-      els.fragmentBar?.querySelectorAll('.fragment-slot').forEach(s => s.classList.remove('is-collected'));
       els.secretEnding?.setAttribute('hidden', '');
       selectedPath = 'well';
       els.pathChoices?.querySelectorAll('.path-btn').forEach(b => {
@@ -414,6 +426,11 @@ const StoryInteractions = (() => {
       });
       els.pathResultText.textContent = PATH_TEXTS.well;
       PathBackground?.switchTo?.('well');
+      MythRitual?.reset?.();
+      MythRitual?.setSelectedPath?.('well');
+      document.querySelectorAll('[data-path-echo], #pathEchoCastle, #pathEchoField').forEach(el => {
+        el.setAttribute('hidden', '');
+      });
       PixelAudio.sfx.page();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });

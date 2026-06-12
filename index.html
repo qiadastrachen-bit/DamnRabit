@@ -6,12 +6,13 @@
   <title>蛋与兔 · 碎梦童话</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/layouts.css">
   <link rel="stylesheet" href="css/cute-effects.css">
   <link rel="stylesheet" href="css/chapter-hero.css">
   <link rel="stylesheet" href="css/game.css">
+  <link rel="stylesheet" href="css/myth.css">
 </head>
 <body>
   <div class="crt-overlay" aria-hidden="true"></div>
@@ -26,13 +27,13 @@
     <div class="hud__left">
       <button class="hud-btn" id="soundBtn" type="button" title="音效开关" aria-label="音效开关">♪</button>
       <button class="hud-btn hud-btn--game" id="gameBtn" type="button" title="本章小戏" aria-label="本章小戏">▶</button>
-      <span class="hud-hint" id="hudHint">慢滚页面 · 让左侧蛋兔走近贴纸/道具 · ▶ 本章小戏</span>
+      <span class="hud-hint" id="hudHint">慢些翻页，故事认得你的脚步</span>
     </div>
     <div class="scroll-progress" aria-hidden="true">
       <div class="scroll-progress__bar"></div>
     </div>
-    <div class="fragment-bar" id="fragmentBar" aria-label="故事碎片收集">
-      <span class="fragment-bar__label">碎片</span>
+    <div class="fragment-bar" id="fragmentBar" aria-label="梦屑收集">
+      <span class="fragment-bar__label">梦屑</span>
       <div class="fragment-slots">
         <span class="fragment-slot" data-idx="0"></span>
         <span class="fragment-slot" data-idx="1"></span>
@@ -42,6 +43,11 @@
       </div>
     </div>
   </header>
+
+  <div class="fragment-mosaic" id="fragmentMosaic" hidden aria-hidden="true">
+    <p class="fragment-mosaic__line">蛋里睡着故事，兔里醒着读者，</p>
+    <p class="fragment-mosaic__line">撕掉的是封面，留下的是你。</p>
+  </div>
 
   <!-- 章节导航 -->
   <nav class="chapter-nav" id="chapterNav" aria-label="章节导航">
@@ -56,7 +62,7 @@
   <!-- 左侧主角舞台 -->
   <div class="hero-stage" aria-hidden="true">
     <span class="hero-stage__label">— 蛋兔行迹 —</span>
-    <p class="hero-stage__hint" id="heroApproachHint">← 蛋兔停在这里 · 慢速滚动把贴纸送过来</p>
+    <p class="hero-stage__hint" id="heroApproachHint">慢些翻页，林中魂物自会靠近</p>
   </div>
 
   <!-- 主角 + 对话 -->
@@ -71,6 +77,11 @@
   </div>
 
   <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
+
+  <aside class="book-annotation" id="bookAnnotation" hidden aria-live="polite">
+    <span class="book-annotation__sigil">批</span>
+    <p class="book-annotation__text" id="bookAnnotationText"></p>
+  </aside>
 
   <!-- 秘密弹窗 -->
   <div class="secret-toast" id="secretToast" hidden role="status">
@@ -89,17 +100,18 @@
         <p class="chapter__subtitle">碎 梦 童 话</p>
         <div class="cover-actions">
           <button class="start-btn" id="startBtn" type="button">▶ 翻开绘本</button>
-          <button class="chapter-mini-btn" type="button" data-chapter-game="0">🎮 月光拾页</button>
-          <button class="game-launch-btn" id="coverGameBtn" type="button">🎮 拾梦夜行</button>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="0">月光拾页</button>
+          <button class="game-launch-btn" id="coverGameBtn" type="button">拾梦夜行</button>
         </div>
         <p class="chapter__hint">或直接向下滚动</p>
+        <p class="myth-inscription myth-inscription--cover">壳未碎时，梦已睁眼</p>
       </div>
       <div class="cover-aside-deco cover-aside-deco--left" aria-hidden="true">
         <p class="cover-fragment">「有些故事醒来时，发现自己被撕掉了封面。」</p>
-        <p class="cover-fragment">「蛋里睡着的不一定是生命。」</p>
+        <p class="cover-fragment">「蛋里睡着的，不一定是生命。」</p>
       </div>
       <div class="cover-aside-deco cover-aside-deco--right" aria-hidden="true">
-        <p class="cover-fragment">「翻页的人，也会被故事记住。」</p>
+        <p class="cover-fragment">「翻页的人，终将成为下一则童话。」</p>
       </div>
       <button class="cover-moon scene-prop--moon is-interactive" id="coverMoon" type="button" data-secret="moon" aria-label="点击月亮" title="月亮似乎藏着什么…"></button>
       <div class="cover-trees" aria-hidden="true"></div>
@@ -112,6 +124,7 @@
       <div class="chapter__grid">
         <aside class="chapter__aside" data-aside-reveal>
           <span class="chapter__aside-label">◈ 林间残页</span>
+          <p class="myth-inscription">初生之卵，不识其名</p>
           <div class="pixel-scene pixel-scene--forest" aria-hidden="true"></div>
           <div class="mini-tale mini-tale--cycle" data-tale="egg">
             <span class="mini-tale__label">蛋壳日记 · 壹</span>
@@ -132,11 +145,11 @@
             <p>只记得头顶那颗白蛋，在黎明前渗出一缕温热的光——蛋黄里睁着一双兔子的眼睛，安静，却从不眨眼。</p>
             <p>精灵的耳朵能听见很远处的哭声。那哭声不像人，也不像兽，像是某本被撕碎的童话，在风里一页一页翻自己。</p>
           </div>
-          <button class="chapter-mini-btn" type="button" data-chapter-game="1">🎮 林间迷径</button>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="1">林间迷径</button>
         </div>
       </div>
       <button class="scene-prop scene-prop--mushroom is-interactive" data-secret="mushroom" type="button" aria-label="点击蘑菇">
-        <span class="prop-label">?</span>
+        <span class="prop-label">蕈</span>
       </button>
     </section>
 
@@ -149,6 +162,7 @@
       <div class="chapter__grid">
         <aside class="chapter__aside" data-aside-reveal>
           <span class="chapter__aside-label">◈ 岔路舆图</span>
+          <p class="myth-inscription">三径分梦，井唤旧名</p>
           <div class="pixel-scene pixel-scene--paths" aria-hidden="true">
             <span class="path-line path-line--l"></span>
             <span class="path-line path-line--m"></span>
@@ -193,12 +207,14 @@
         <div class="story-text story-text--after-choice story-text--stagger" data-reveal id="pathResult">
           <p id="pathResultText">蛋上的兔子轻轻动了动耳朵。她选择了中间。不是因为她勇敢，而是因为井底的声音，叫了她的名字。</p>
           <p>那个名字她从未听过，却觉得像是很久以前，有人用摇篮曲哼过。</p>
+          <p class="path-echo path-echo--castle" id="pathEchoCastle" hidden>她记得失重的台阶。倒悬城堡的影子，仍贴在后背。</p>
+          <p class="path-echo path-echo--field" id="pathEchoField" hidden>麦浪像在迎接旧客——脚步比心跳慢半拍，却像早就来过这里。</p>
         </div>
-        <button class="chapter-mini-btn" type="button" data-chapter-game="2">🎮 岔路迷踪</button>
+        <button class="chapter-mini-btn" type="button" data-chapter-game="2">岔路迷踪</button>
         </div>
       </div>
       <button class="scene-prop scene-prop--well is-interactive" data-secret="well" type="button" aria-label="点击古井">
-        <span class="prop-label">?</span>
+        <span class="prop-label">渊</span>
       </button>
     </section>
 
@@ -209,6 +225,7 @@
       <div class="chapter__grid">
         <aside class="chapter__aside" data-aside-reveal>
           <span class="chapter__aside-label">◈ 镜之残页</span>
+          <p class="myth-inscription">镜裂王座，百年一人</p>
           <div class="pixel-scene pixel-scene--castle" aria-hidden="true"></div>
           <blockquote class="pull-quote">恐惧长成了王的样子</blockquote>
           <div class="mini-tale mini-tale--cycle" data-tale="mirror">
@@ -226,11 +243,13 @@
             <p>王座上坐着一个没有脸的王，手里捧着一面裂开的镜子。镜子里不是她的倒影——是一个戴蛋帽的女孩，正在另一片森林里奔跑。</p>
             <p class="story-dialogue">「你来了。」王说，声音像干枯的树叶，「每一百年，蛋会选一个人醒来。上一个人……她把兔子留在了镜子里。」</p>
           </div>
-          <button class="chapter-mini-btn" type="button" data-chapter-game="3">🎮 镜中消消</button>
+          <p class="path-echo path-echo--castle" data-path-echo="castle" hidden>石阶向上延伸的那一夜，王座比井更深。她仍能听见门把手在天花板上的响动。</p>
+          <p class="path-echo path-echo--field" data-path-echo="field" hidden>镜里奔跑的女孩鞋底沾着麦芒。恐惧没有脸，却有故乡的气味。</p>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="3">镜中消消</button>
         </div>
       </div>
       <button class="scene-prop scene-prop--mirror is-interactive" data-secret="mirror" type="button" aria-label="拖动镜子" id="mirrorProp">
-        <span class="prop-label">照</span>
+        <span class="prop-label">鉴</span>
         <div class="mirror-reflection" aria-hidden="true"></div>
       </button>
     </section>
@@ -242,6 +261,7 @@
       <div class="chapter__grid">
         <aside class="chapter__aside" data-aside-reveal>
           <span class="chapter__aside-label">◈ 麦野诗笺</span>
+          <p class="myth-inscription">麦芒即页，风念遗句</p>
           <div class="pixel-scene pixel-scene--wheat" aria-hidden="true">
             <span class="wheat-stalk"></span><span class="wheat-stalk"></span><span class="wheat-stalk"></span>
             <span class="wheat-stalk"></span><span class="wheat-stalk"></span><span class="wheat-stalk"></span>
@@ -266,11 +286,12 @@
             <p class="story-dialogue">「很久以前，你写过一本童话。你把自己写成了主角，把恐惧写成了王，把来不及说再见的人——写成了我。」</p>
             <p>麦浪涌来。她伸出手，触到的不止是麦芒，还有纸页粗糙的边缘。</p>
           </div>
-          <button class="chapter-mini-btn" type="button" data-chapter-game="4">🎮 接住眼泪</button>
+          <p class="path-echo path-echo--castle" data-path-echo="castle" hidden>麦田的风从下方吹来，像倒悬城堡里未曾关上的窗。</p>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="4">接住眼泪</button>
         </div>
       </div>
       <button class="scene-prop scene-prop--wheat is-interactive" data-secret="wheat" type="button" aria-label="拂过麦浪">
-        <span class="prop-label">触</span>
+        <span class="prop-label">穗</span>
       </button>
     </section>
 
@@ -298,11 +319,12 @@
             <p>她终于想起那个名字。不是公主，不是女巫，是一个在深夜写字的普通女孩，在某一行句点之后，睡着了，再没醒来。</p>
             <p class="story-ending">「故事没有结局。」她在空白的书页上写，「只有翻页的人，愿意再读一遍。」</p>
             <p class="secret-ending" id="secretEnding" hidden>「还有另一种结局——」蛋兔眨了眨眼，「读故事的人，也成为了故事里的一部分。」</p>
+            <p class="myth-inscription myth-inscription--ending">壳碎星坠，读者入书</p>
           </div>
           <div class="ending-actions">
-            <button class="chapter-mini-btn" type="button" data-chapter-game="5">🎮 书写终章</button>
+            <button class="chapter-mini-btn" type="button" data-chapter-game="5">书写终章</button>
             <button class="restart-btn" id="restartBtn" type="button">↺ 再读一遍</button>
-            <button class="share-btn" id="shareBtn" type="button">✦ 分享这句童话</button>
+            <button class="share-btn" id="shareBtn" type="button">把这句话留给下一位翻页人</button>
           </div>
         </div>
       </div>
@@ -311,7 +333,7 @@
   </main>
 
   <footer class="footer">
-    <span>像素风暗黑童话绘本 · 滚动 · 点击 · 每章小戏 · 拾梦夜行</span>
+    <span>碎梦童话 · 慢翻如仪 · 点击如批 · 章中皆有梦戏</span>
     <button class="footer-logo" type="button" id="legLogoBtn" aria-label="鸡腿大王彩蛋">
       <canvas class="footer-logo__leg" data-leg-logo data-scale="4" width="68" height="64" aria-hidden="true"></canvas>
       <span class="footer-logo__tag">鸡腿印记 · 点我</span>
@@ -358,6 +380,7 @@
   <script src="js/particles.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/cursor.js"></script>
+  <script src="js/myth-ritual.js"></script>
   <script src="js/interactions.js"></script>
   <script src="js/side-stories.js"></script>
   <script src="js/path-bg.js"></script>
