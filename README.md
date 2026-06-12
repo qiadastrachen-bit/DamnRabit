@@ -6,7 +6,7 @@
 
 **https://qiadastrachen-bit.github.io/DamnRabit/**
 
-（若暂时打不开，请到仓库 Settings → Pages，Source 选 **GitHub Actions** 或 **gh-pages** 分支，保存后等 1～2 分钟。）
+若 Actions 报错，请到 **Settings → Pages**，Source 选 **GitHub Actions** 后保存，再到 **Actions** 页点 **Re-run all jobs**。
 
 ## 本地预览
 
