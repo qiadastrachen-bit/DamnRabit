@@ -1,0 +1,290 @@
+/* ===== 可可爱爱点击效果 ===== */
+.cute-fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cute-floater {
+  position: fixed;
+  font-size: 1rem;
+  pointer-events: none;
+  animation: cute-float-up 1.2s ease-out forwards;
+  text-shadow: 0 0 6px currentColor;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes cute-float-up {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.6); }
+  40% { opacity: 1; transform: translate(-50%, -80%) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -140%) scale(0.8); }
+}
+
+.cute-tear {
+  position: fixed;
+  font-size: 0.75rem;
+  pointer-events: none;
+  animation: cute-tear-fall 1.2s ease-in forwards;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes cute-tear-fall {
+  0% { opacity: 0.9; transform: translate(-50%, -50%); }
+  100% { opacity: 0; transform: translate(-50%, 20px); }
+}
+
+.cute-pop {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  margin: 0;
+  padding: 0.45em 0.8em;
+  font-family: var(--story-font);
+  font-size: 0.85rem;
+  color: var(--text-pale);
+  background: rgba(14, 10, 20, 0.92);
+  border: 2px solid;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.cute-pop.is-show {
+  opacity: 1;
+  transform: translate(-50%, -110%);
+}
+
+/* 贴纸按钮 */
+button.pixel-sticker {
+  cursor: pointer;
+  font-family: var(--pixel-font);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+button.pixel-sticker:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 14px currentColor;
+}
+
+button.pixel-sticker:active {
+  transform: scale(0.95);
+}
+
+.mini-tale:not(.mini-tale--cycle) {
+  cursor: pointer;
+  transition: background 0.25s, transform 0.2s;
+}
+
+.mini-tale:not(.mini-tale--cycle):hover {
+  background: rgba(212, 184, 106, 0.06);
+}
+
+.chapter__aside-label {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.chapter__aside-label:hover {
+  color: var(--accent-gold);
+}
+
+/* 扭一扭动画 */
+.wiggle-moss {
+  animation: wiggle-moss 0.55s ease;
+}
+
+.wiggle-hop {
+  animation: wiggle-hop 0.5s ease;
+}
+
+.wiggle-sparkle {
+  animation: wiggle-sparkle 0.45s ease;
+}
+
+@keyframes wiggle-moss {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-4deg) scale(1.05); }
+  40% { transform: rotate(4deg); }
+  60% { transform: rotate(-2deg); }
+}
+
+@keyframes wiggle-hop {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px) scale(1.05); }
+  60% { transform: translateY(-3px); }
+}
+
+@keyframes wiggle-sparkle {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.08); filter: brightness(1.3); }
+}
+
+/* 主角舞台足迹提示 */
+.hero-stage__label {
+  animation: label-pulse 4s ease-in-out infinite;
+}
+
+@keyframes label-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.55; }
+}
+
+/* 主角靠近高亮 */
+.is-hero-nearby {
+  outline: 2px dashed rgba(248, 238, 184, 0.55);
+  outline-offset: 4px;
+  transition: outline 0.3s;
+}
+
+button.pixel-sticker.is-hero-nearby,
+.mini-tale.is-hero-nearby {
+  box-shadow: 0 0 18px rgba(248, 238, 184, 0.35);
+}
+
+/* ===== 道具专属动画 ===== */
+.prop-anim--mushroom {
+  animation: prop-mushroom-bounce 0.7s ease;
+}
+
+.prop-anim--well {
+  animation: prop-well-glow 0.9s ease;
+}
+
+.prop-anim--mirror {
+  animation: prop-mirror-tilt 0.8s ease;
+}
+
+.prop-anim--mirror-flash .mirror-reflection {
+  animation: prop-mirror-flash 0.8s ease;
+}
+
+.prop-anim--wheat {
+  animation: prop-wheat-sway 1s ease;
+}
+
+.prop-anim--moon {
+  animation: prop-moon-pulse 1s ease;
+}
+
+.prop-anim--nearby {
+  animation: prop-nearby-pulse 1.2s ease;
+}
+
+@keyframes prop-mushroom-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-14px) scale(1.08); }
+  50% { transform: translateY(-6px) scale(1.04) rotate(-3deg); }
+  70% { transform: translateY(-10px) scale(1.06) rotate(2deg); }
+}
+
+@keyframes prop-well-glow {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 8px rgba(122,154,176,0.3)); }
+  50% { filter: brightness(1.4) drop-shadow(0 0 24px rgba(122,154,176,0.7)); }
+}
+
+@keyframes prop-mirror-tilt {
+  0%, 100% { transform: rotate(-5deg); }
+  25% { transform: rotate(-12deg) scale(1.05); }
+  75% { transform: rotate(2deg) scale(1.03); }
+}
+
+@keyframes prop-mirror-flash {
+  0%, 100% { opacity: 0.3; }
+  40% { opacity: 1; background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent); }
+}
+
+@keyframes prop-wheat-sway {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-6deg) scale(1.05); }
+  75% { transform: rotate(6deg) scale(1.05); }
+}
+
+@keyframes prop-moon-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(240,232,200,0.25); }
+  50% { transform: scale(1.12); box-shadow: 0 0 70px rgba(240,232,200,0.55); }
+}
+
+@keyframes prop-nearby-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
+
+/* 井口涟漪 */
+.prop-ripple {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 2px solid rgba(122, 154, 176, 0.6);
+  border-radius: 50%;
+  animation: prop-ripple-expand 0.9s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes prop-ripple-expand {
+  0% { transform: scale(0.3); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.scene-prop.is-interactive {
+  overflow: visible;
+}
+
+.cover-moon.scene-prop--moon.is-hero-nearby {
+  box-shadow: 0 0 50px rgba(240, 232, 200, 0.5);
+}
+
+/* 击掌 */
+.is-highfive {
+  outline: 2px solid rgba(248, 238, 184, 0.85) !important;
+  outline-offset: 5px;
+}
+
+.hero-layer.hero-highfive {
+  filter: brightness(1.15) drop-shadow(0 0 12px rgba(248, 238, 184, 0.45));
+  transition: filter 0.25s;
+}
+
+.prop-anim--highfive {
+  animation: prop-highfive-reach 0.75s ease;
+}
+
+@keyframes prop-highfive-reach {
+  0%, 100% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-10px) scale(1.12) rotate(-4deg); }
+  55% { transform: translateY(-6px) scale(1.08); }
+}
+
+button.pixel-sticker.is-highfive,
+.mini-tale.is-highfive {
+  animation: sticker-highfive-hop 0.7s ease;
+}
+
+@keyframes sticker-highfive-hop {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-8px) scale(1.06); }
+}
+
+.highfive-spark {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(248, 238, 184, 0.9) 0%, rgba(212, 184, 106, 0.2) 55%, transparent 70%);
+  animation: highfive-spark-pop 0.65s ease-out forwards;
+  pointer-events: none;
+  z-index: 9500;
+}
+
+@keyframes highfive-spark-pop {
+  0% { transform: scale(0.2); opacity: 0; }
+  35% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}

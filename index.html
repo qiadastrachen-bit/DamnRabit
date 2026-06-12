@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蛋与兔 · 碎梦童话</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layouts.css">
+  <link rel="stylesheet" href="css/cute-effects.css">
+  <link rel="stylesheet" href="css/chapter-hero.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <div class="crt-overlay" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="flash-overlay" id="flashOverlay" aria-hidden="true"></div>
+
+  <!-- 像素光标 -->
+  <div class="pixel-cursor" id="pixelCursor" aria-hidden="true"></div>
+
+  <!-- 顶部 HUD -->
+  <header class="hud" id="hud">
+    <div class="hud__left">
+      <button class="hud-btn" id="soundBtn" type="button" title="音效开关" aria-label="音效开关">♪</button>
+      <button class="hud-btn hud-btn--game" id="gameBtn" type="button" title="本章小戏" aria-label="本章小戏">▶</button>
+      <span class="hud-hint" id="hudHint">慢滚页面 · 让左侧蛋兔走近贴纸/道具 · ▶ 本章小戏</span>
+    </div>
+    <div class="scroll-progress" aria-hidden="true">
+      <div class="scroll-progress__bar"></div>
+    </div>
+    <div class="fragment-bar" id="fragmentBar" aria-label="故事碎片收集">
+      <span class="fragment-bar__label">碎片</span>
+      <div class="fragment-slots">
+        <span class="fragment-slot" data-idx="0"></span>
+        <span class="fragment-slot" data-idx="1"></span>
+        <span class="fragment-slot" data-idx="2"></span>
+        <span class="fragment-slot" data-idx="3"></span>
+        <span class="fragment-slot" data-idx="4"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 章节导航 -->
+  <nav class="chapter-nav" id="chapterNav" aria-label="章节导航">
+    <button class="chapter-nav__dot is-active" data-target="0" title="封面"><span>封</span></button>
+    <button class="chapter-nav__dot" data-target="1" title="序章"><span>序</span></button>
+    <button class="chapter-nav__dot" data-target="2" title="第一章"><span>壹</span></button>
+    <button class="chapter-nav__dot" data-target="3" title="第二章"><span>贰</span></button>
+    <button class="chapter-nav__dot" data-target="4" title="第三章"><span>叁</span></button>
+    <button class="chapter-nav__dot" data-target="5" title="终章"><span>终</span></button>
+  </nav>
+
+  <!-- 左侧主角舞台 -->
+  <div class="hero-stage" aria-hidden="true">
+    <span class="hero-stage__label">— 蛋兔行迹 —</span>
+    <p class="hero-stage__hint" id="heroApproachHint">← 蛋兔停在这里 · 慢速滚动把贴纸送过来</p>
+  </div>
+
+  <!-- 主角 + 对话 -->
+  <div class="hero-layer" id="heroLayer">
+    <button class="hero-hitbox" id="heroHitbox" type="button" aria-label="点击与蛋兔少女互动"></button>
+    <canvas id="heroCanvas" width="137" height="183" aria-hidden="true"></canvas>
+    <div class="hero-shadow"></div>
+    <div class="dialogue-bubble" id="dialogueBubble" hidden>
+      <span class="dialogue-bubble__tag">蛋兔说</span>
+      <p class="dialogue-bubble__text" id="dialogueText"></p>
+    </div>
+  </div>
+
+  <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- 秘密弹窗 -->
+  <div class="secret-toast" id="secretToast" hidden role="status">
+    <span class="secret-toast__icon">✦</span>
+    <p class="secret-toast__text" id="secretToastText"></p>
+  </div>
+
+  <main class="story" id="story">
+    <!-- 封面 -->
+    <section class="chapter chapter--cover" data-chapter="0" id="ch-cover">
+      <div class="chapter__bg chapter__bg--cover"></div>
+      <div class="book-frame" aria-hidden="true"></div>
+      <div class="chapter__content">
+        <p class="chapter__tag">— 暗黑童话绘本 —</p>
+        <h1 class="chapter__title" id="coverTitle">蛋与兔</h1>
+        <p class="chapter__subtitle">碎 梦 童 话</p>
+        <div class="cover-actions">
+          <button class="start-btn" id="startBtn" type="button">▶ 翻开绘本</button>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="0">🎮 月光拾页</button>
+          <button class="game-launch-btn" id="coverGameBtn" type="button">🎮 拾梦夜行</button>
+        </div>
+        <p class="chapter__hint">或直接向下滚动</p>
+      </div>
+      <div class="cover-aside-deco cover-aside-deco--left" aria-hidden="true">
+        <p class="cover-fragment">「有些故事醒来时，发现自己被撕掉了封面。」</p>
+        <p class="cover-fragment">「蛋里睡着的不一定是生命。」</p>
+      </div>
+      <div class="cover-aside-deco cover-aside-deco--right" aria-hidden="true">
+        <p class="cover-fragment">「翻页的人，也会被故事记住。」</p>
+      </div>
+      <button class="cover-moon scene-prop--moon is-interactive" id="coverMoon" type="button" data-secret="moon" aria-label="点击月亮" title="月亮似乎藏着什么…"></button>
+      <div class="cover-trees" aria-hidden="true"></div>
+    </section>
+
+    <!-- 序章 -->
+    <section class="chapter chapter--prologue layout--split" data-chapter="1" id="ch-prologue">
+      <div class="chapter__bg chapter__bg--forest"></div>
+      <div class="book-frame" aria-hidden="true"></div>
+      <div class="chapter__grid">
+        <aside class="chapter__aside" data-aside-reveal>
+          <span class="chapter__aside-label">◈ 林间残页</span>
+          <div class="pixel-scene pixel-scene--forest" aria-hidden="true"></div>
+          <div class="mini-tale mini-tale--cycle" data-tale="egg">
+            <span class="mini-tale__label">蛋壳日记 · 壹</span>
+            <p class="mini-tale__body">第一天。我不知道自己是谁，但兔子认识我。</p>
+            <span class="mini-tale__hint">点击翻阅 ▷</span>
+          </div>
+          <div class="mini-tale">
+            <span class="mini-tale__label">森林法则</span>
+            <p class="mini-tale__body">请勿在午夜踩踏会哭的苔藓。它们记得每一个踩碎童话的人。</p>
+          </div>
+          <button class="pixel-sticker pixel-sticker--moss" type="button" data-cute-fx="moss">🌿 会哭的苔藓</button>
+        </aside>
+        <div class="chapter__content chapter__content--card">
+          <span class="chapter__num">序章</span>
+          <h2 class="chapter__heading" data-typewriter>白蛋醒来之时</h2>
+          <div class="story-text story-text--highlight" data-reveal>
+            <p>她不记得自己是谁。</p>
+            <p>只记得头顶那颗白蛋，在黎明前渗出一缕温热的光——蛋黄里睁着一双兔子的眼睛，安静，却从不眨眼。</p>
+            <p>精灵的耳朵能听见很远处的哭声。那哭声不像人，也不像兽，像是某本被撕碎的童话，在风里一页一页翻自己。</p>
+          </div>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="1">🎮 林间迷径</button>
+        </div>
+      </div>
+      <button class="scene-prop scene-prop--mushroom is-interactive" data-secret="mushroom" type="button" aria-label="点击蘑菇">
+        <span class="prop-label">?</span>
+      </button>
+    </section>
+
+    <!-- 第一章 -->
+    <section class="chapter chapter--ch1 layout--wide layout--offset" data-chapter="2" id="ch-ch1" data-selected-path="well">
+      <div class="chapter__bg chapter__bg--mist" id="ch1BgMist"></div>
+      <canvas class="path-bg-canvas path-bg--well" id="pathBgCanvas" aria-hidden="true"></canvas>
+      <div class="path-bg-vignette" aria-hidden="true"></div>
+      <div class="book-frame" aria-hidden="true"></div>
+      <div class="chapter__grid">
+        <aside class="chapter__aside" data-aside-reveal>
+          <span class="chapter__aside-label">◈ 岔路舆图</span>
+          <div class="pixel-scene pixel-scene--paths" aria-hidden="true">
+            <span class="path-line path-line--l"></span>
+            <span class="path-line path-line--m"></span>
+            <span class="path-line path-line--r"></span>
+            <span class="path-sign path-sign--l">城堡↑</span>
+            <span class="path-sign path-sign--m">古井↓</span>
+            <span class="path-sign path-sign--r">麦田→</span>
+          </div>
+          <div class="mini-tale">
+            <span class="mini-tale__label">路人手记</span>
+            <p class="mini-tale__body">从未有人走过左路。倒悬城堡的门把手，安装在天花板上。</p>
+          </div>
+          <div class="mini-tale mini-tale--cycle" data-tale="well">
+            <span class="mini-tale__label">井边耳语</span>
+            <p class="mini-tale__body">井壁回响：「……回来吧，写故事的人。」</p>
+            <span class="mini-tale__hint">点击聆听 ▷</span>
+          </div>
+        </aside>
+        <div class="chapter__content chapter__content--ribbon">
+        <span class="chapter__num">第一章</span>
+        <h2 class="chapter__heading" data-typewriter>迷雾森林的岔路</h2>
+        <div class="story-text" data-reveal>
+          <p>森林没有路牌，只有三条小径，分别通向——</p>
+        </div>
+        <div class="path-choices" id="pathChoices" data-reveal>
+          <button class="path-btn" data-path="castle" type="button">
+            <span class="path-btn__icon">🏰</span>
+            <span class="path-btn__name">倒悬城堡</span>
+            <span class="path-btn__hint">左径 · 失重之地</span>
+          </button>
+          <button class="path-btn path-btn--default is-selected" data-path="well" type="button">
+            <span class="path-btn__icon">🕳️</span>
+            <span class="path-btn__name">说话之井</span>
+            <span class="path-btn__hint">中路 · 呼唤你名</span>
+          </button>
+          <button class="path-btn" data-path="field" type="button">
+            <span class="path-btn__icon">🌾</span>
+            <span class="path-btn__name">黄昏麦田</span>
+            <span class="path-btn__hint">右径 · 旧梦回响</span>
+          </button>
+        </div>
+        <div class="story-text story-text--after-choice story-text--stagger" data-reveal id="pathResult">
+          <p id="pathResultText">蛋上的兔子轻轻动了动耳朵。她选择了中间。不是因为她勇敢，而是因为井底的声音，叫了她的名字。</p>
+          <p>那个名字她从未听过，却觉得像是很久以前，有人用摇篮曲哼过。</p>
+        </div>
+        <button class="chapter-mini-btn" type="button" data-chapter-game="2">🎮 岔路迷踪</button>
+        </div>
+      </div>
+      <button class="scene-prop scene-prop--well is-interactive" data-secret="well" type="button" aria-label="点击古井">
+        <span class="prop-label">?</span>
+      </button>
+    </section>
+
+    <!-- 第二章 -->
+    <section class="chapter chapter--ch2 layout--reverse layout--offset" data-chapter="3" id="ch-ch2">
+      <div class="chapter__bg chapter__bg--castle"></div>
+      <div class="book-frame" aria-hidden="true"></div>
+      <div class="chapter__grid">
+        <aside class="chapter__aside" data-aside-reveal>
+          <span class="chapter__aside-label">◈ 镜之残页</span>
+          <div class="pixel-scene pixel-scene--castle" aria-hidden="true"></div>
+          <blockquote class="pull-quote">恐惧长成了王的样子</blockquote>
+          <div class="mini-tale mini-tale--cycle" data-tale="mirror">
+            <span class="mini-tale__label">镜中轶事</span>
+            <p class="mini-tale__body">镜中倒影比你早半秒眨眼。</p>
+            <span class="mini-tale__hint">点击切换 ▷</span>
+          </div>
+          <button class="pixel-sticker pixel-sticker--star" type="button" data-cute-fx="star">✦ 百年一人</button>
+        </aside>
+        <div class="chapter__content chapter__content--card">
+          <span class="chapter__num">第二章</span>
+          <h2 class="chapter__heading" data-typewriter>井底的王座</h2>
+          <div class="story-text story-text--highlight" data-reveal>
+            <p>井不是井。井是一座倒置的宫殿，石阶向下延伸，却通向更高的地方。</p>
+            <p>王座上坐着一个没有脸的王，手里捧着一面裂开的镜子。镜子里不是她的倒影——是一个戴蛋帽的女孩，正在另一片森林里奔跑。</p>
+            <p class="story-dialogue">「你来了。」王说，声音像干枯的树叶，「每一百年，蛋会选一个人醒来。上一个人……她把兔子留在了镜子里。」</p>
+          </div>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="3">🎮 镜中消消</button>
+        </div>
+      </div>
+      <button class="scene-prop scene-prop--mirror is-interactive" data-secret="mirror" type="button" aria-label="拖动镜子" id="mirrorProp">
+        <span class="prop-label">照</span>
+        <div class="mirror-reflection" aria-hidden="true"></div>
+      </button>
+    </section>
+
+    <!-- 第三章 -->
+    <section class="chapter chapter--ch3 layout--split" data-chapter="4" id="ch-ch3">
+      <div class="chapter__bg chapter__bg--field"></div>
+      <div class="book-frame" aria-hidden="true"></div>
+      <div class="chapter__grid">
+        <aside class="chapter__aside" data-aside-reveal>
+          <span class="chapter__aside-label">◈ 麦野诗笺</span>
+          <div class="pixel-scene pixel-scene--wheat" aria-hidden="true">
+            <span class="wheat-stalk"></span><span class="wheat-stalk"></span><span class="wheat-stalk"></span>
+            <span class="wheat-stalk"></span><span class="wheat-stalk"></span><span class="wheat-stalk"></span>
+          </div>
+          <div class="mini-tale mini-tale--cycle" data-tale="wheat">
+            <span class="mini-tale__label">银色麦穗 · 拾句</span>
+            <p class="mini-tale__body">风过麦田，听起来像有人在念你的名字。</p>
+            <span class="mini-tale__hint">点击拾句 ▷</span>
+          </div>
+          <div class="mini-tale">
+            <span class="mini-tale__label">兔子的告白</span>
+            <p class="mini-tale__body">「我不是帽子。我是你来不及说再见的那个句号。」</p>
+          </div>
+          <button class="pixel-sticker pixel-sticker--egg" type="button" data-cute-fx="egg">🥚 遗落的梦</button>
+        </aside>
+        <div class="chapter__content chapter__content--ribbon">
+          <span class="chapter__num">第三章</span>
+          <h2 class="chapter__heading" data-typewriter>麦田里的旧梦</h2>
+          <div class="story-text story-text--stagger" data-reveal>
+            <p>她走出宫殿，发现自己站在黄昏的麦田中央。麦穗是银色的，风一吹就发出细碎的铃声。</p>
+            <p class="story-dialogue">蛋黄里的兔子终于开口：「我不是你的帽子。我是你遗落的梦。」</p>
+            <p class="story-dialogue">「很久以前，你写过一本童话。你把自己写成了主角，把恐惧写成了王，把来不及说再见的人——写成了我。」</p>
+            <p>麦浪涌来。她伸出手，触到的不止是麦芒，还有纸页粗糙的边缘。</p>
+          </div>
+          <button class="chapter-mini-btn" type="button" data-chapter-game="4">🎮 接住眼泪</button>
+        </div>
+      </div>
+      <button class="scene-prop scene-prop--wheat is-interactive" data-secret="wheat" type="button" aria-label="拂过麦浪">
+        <span class="prop-label">触</span>
+      </button>
+    </section>
+
+    <!-- 终章 -->
+    <section class="chapter chapter--ending layout--stack" data-chapter="5" id="ch-ending">
+      <div class="chapter__bg chapter__bg--dawn"></div>
+      <div class="book-frame" aria-hidden="true"></div>
+      <div class="chapter__grid">
+        <aside class="chapter__aside" data-aside-reveal>
+          <div class="mini-tale" data-cute-fx="reader">
+            <span class="mini-tale__label">读者留言</span>
+            <p class="mini-tale__body">「我读到最后一页时，蛋兔看向了我。」</p>
+          </div>
+          <div class="mini-tale">
+            <span class="mini-tale__label">空白书页</span>
+            <p class="mini-tale__body">最后一页没有字。只有一行浅浅的爪印。</p>
+          </div>
+          <button class="pixel-sticker pixel-sticker--star" type="button" data-cute-fx="retry">✦ 再读一遍</button>
+        </aside>
+        <div class="chapter__content chapter__content--card">
+          <span class="chapter__num">终章</span>
+          <h2 class="chapter__heading" data-typewriter>童话的最后一页</h2>
+          <div class="story-text story-text--highlight" data-reveal>
+            <p>天亮了。蛋壳碎成光屑，兔子跳进她掌心，变成一枚小小的星形吊坠——和她脖子上那条，一模一样。</p>
+            <p>她终于想起那个名字。不是公主，不是女巫，是一个在深夜写字的普通女孩，在某一行句点之后，睡着了，再没醒来。</p>
+            <p class="story-ending">「故事没有结局。」她在空白的书页上写，「只有翻页的人，愿意再读一遍。」</p>
+            <p class="secret-ending" id="secretEnding" hidden>「还有另一种结局——」蛋兔眨了眨眼，「读故事的人，也成为了故事里的一部分。」</p>
+          </div>
+          <div class="ending-actions">
+            <button class="chapter-mini-btn" type="button" data-chapter-game="5">🎮 书写终章</button>
+            <button class="restart-btn" id="restartBtn" type="button">↺ 再读一遍</button>
+            <button class="share-btn" id="shareBtn" type="button">✦ 分享这句童话</button>
+          </div>
+        </div>
+      </div>
+      <div class="ending-stars" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>像素风暗黑童话绘本 · 滚动 · 点击 · 每章小戏 · 拾梦夜行</span>
+    <button class="footer-logo" type="button" id="legLogoBtn" aria-label="鸡腿大王彩蛋">
+      <canvas class="footer-logo__leg" data-leg-logo data-scale="4" width="68" height="64" aria-hidden="true"></canvas>
+      <span class="footer-logo__tag">鸡腿印记 · 点我</span>
+    </button>
+    <div class="leg-toast" id="legToast" hidden role="status">
+      <span class="leg-toast__icon">🍗</span>
+      <p class="leg-toast__text">欢迎来到鸡腿大王创造的世界</p>
+    </div>
+  </footer>
+
+  <!-- 像素小游戏 -->
+  <div class="game-overlay" id="gameOverlay" hidden>
+    <div class="game-shell">
+      <div class="game-hud" id="gameHud">
+        <span class="game-hud__hp">♥♥♥</span>
+        <span class="game-hud__stars">✦ 0/15</span>
+        <span class="game-hud__keys">← → 移动 · 空格 跳跃 · ESC 暂停</span>
+      </div>
+      <canvas id="gameCanvas" class="game-canvas"></canvas>
+      <div class="game-touch" id="gameTouch">
+        <button class="touch-btn" data-game-key="ArrowLeft" type="button">◀</button>
+        <button class="touch-btn touch-btn--jump" data-game-key="Space" type="button">跳</button>
+        <button class="touch-btn" data-game-key="ArrowRight" type="button">▶</button>
+      </div>
+      <div class="game-menu is-visible" id="gameMenu">
+        <p class="game-menu__tag">— 像素小游戏 —</p>
+        <h2 class="game-menu__title" id="gameMenuTitle">拾梦夜行</h2>
+        <p class="game-menu__desc" id="gameMenuDesc">
+          蛋兔少女穿行迷雾森林，收集 15 枚梦碎片，抵达尽头古井。<br>
+          躲避暗影与荆棘，跳跃平台，找回遗落的童话。
+        </p>
+        <div class="game-menu__actions">
+          <button class="game-menu__btn game-menu__btn--primary" id="gameStartBtn" type="button">开始冒险</button>
+          <button class="game-menu__btn" id="gameResumeBtn" type="button" style="display:none">继续游戏</button>
+          <button class="game-menu__btn" id="gameRetryBtn" type="button" style="display:none">再来一次</button>
+          <button class="game-menu__btn game-menu__btn--ghost" id="gameQuitBtn" type="button">返回绘本</button>
+          <button class="game-menu__btn game-menu__btn--ghost" id="gameBackBtn" type="button" style="display:none">返回绘本</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sprite.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/cursor.js"></script>
+  <script src="js/interactions.js"></script>
+  <script src="js/side-stories.js"></script>
+  <script src="js/path-bg.js"></script>
+  <script src="js/cute-effects.js"></script>
+  <script src="js/prop-fx.js"></script>
+  <script src="js/proximity-stories.js"></script>
+  <script src="js/hero-proximity.js"></script>
+  <script src="js/hero-walk.js"></script>
+  <script src="js/chapter-heroes.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/chapter-games.js"></script>
+  <script src="js/leg-logo.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
