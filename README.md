@@ -6,7 +6,10 @@
 
 **https://qiadastrachen-bit.github.io/DamnRabit/**
 
-若 Actions 报错，请到 **Settings → Pages**，Source 选 **GitHub Actions** 后保存，再到 **Actions** 页点 **Re-run all jobs**。
+**Pages 设置（二选一）：**
+
+1. **最简单**：Settings → Pages → Source 选 **Deploy from a branch** → Branch 选 **master** → Folder 选 **/ (root)** → Save  
+2. **或用 Actions**：等 workflow 跑完后，Source 选 **Deploy from a branch** → Branch 选 **gh-pages** → Save
 
 ## 本地预览
 
