@@ -103,7 +103,7 @@
     if (idx !== lastChapterIdx) {
       ProximityStories?.onChapterChange?.(idx);
       if (lastChapterIdx !== 0 || idx !== 0) {
-        StoryInteractions.flash();
+        StoryInteractions.flash(MythRitual?.getChapterFlash?.(idx));
         document.body.classList.add('chapter-transition');
         setTimeout(() => document.body.classList.remove('chapter-transition'), 600);
         PixelAudio.sfx.chapterTransition(idx);

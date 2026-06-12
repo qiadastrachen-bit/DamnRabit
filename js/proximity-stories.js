@@ -64,16 +64,27 @@ const ProximityStories = (() => {
     if (!lines?.[stageIdx]) return;
 
     const { x, y } = heroPoint();
+    const line = lines[stageIdx];
+    const isQuoted = /^[「『]/.test(line.trim());
+
     PixelAudio.sfx.secret();
     window.particles?.burst?.(x, y, '#F8EEB8');
-    StoryInteractions.flash('rgba(212,184,106,0.2)');
+    StoryInteractions.flash(MythRitual?.getChapterFlash?.(chapterIdx) || 'rgba(212,184,106,0.2)');
 
     if (stageIdx < 2) {
-      CuteEffects.showPop(x, y - 50, lines[stageIdx], '#d4b86a');
+      CuteEffects.showPop(x, y - 50, line, '#d4b86a');
       PixelAudio.sfx.dialogue();
+    } else if (isQuoted && chapterIdx >= 5) {
+      MythRitual?.contractFreeze?.();
+      StoryInteractions.showDialogue(line);
+    } else if (isQuoted) {
+      MythRitual?.showAnnotation?.(line);
+      MythRitual?.contractFreeze?.();
     } else {
-      StoryInteractions.showDialogue(lines[stageIdx]);
+      MythRitual?.showAnnotation?.(line);
     }
+
+    MythRitual?.unlockMythStage?.(chapterIdx, stageIdx);
 
     CuteEffects.spawnFloater(x - 16, y - 30, '✦', '#f8eeb8', 0);
     CuteEffects.spawnFloater(x + 16, y - 36, '❝', '#7a9ab0', 120);

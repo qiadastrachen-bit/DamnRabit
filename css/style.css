@@ -762,32 +762,36 @@ body.chapter-transition {
 /* ===== 背景场景 ===== */
 .chapter__bg--forest {
   background:
-    radial-gradient(ellipse at 20% 80%, rgba(40, 60, 40, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(61, 82, 56, 0.35) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, rgba(60, 40, 60, 0.2) 0%, transparent 40%),
     linear-gradient(180deg, #0c1018 0%, #141c14 50%, #0a0e0a 100%);
 }
 
 .chapter__bg--mist {
   background:
+    radial-gradient(ellipse at 30% 60%, rgba(74, 90, 106, 0.22) 0%, transparent 55%),
     radial-gradient(ellipse at 50% 100%, rgba(120, 140, 160, 0.15) 0%, transparent 60%),
     linear-gradient(180deg, #101418 0%, #1a2030 40%, #12161e 100%);
 }
 
 .chapter__bg--castle {
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(80, 50, 80, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(42, 24, 56, 0.35) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(80, 50, 80, 0.18) 0%, transparent 45%),
     linear-gradient(180deg, #100c18 0%, #1a1028 50%, #0c0814 100%);
 }
 
 .chapter__bg--field {
   background:
-    radial-gradient(ellipse at 50% 80%, rgba(180, 160, 100, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(200, 184, 120, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 40%, rgba(180, 160, 100, 0.1) 0%, transparent 40%),
     linear-gradient(180deg, #18140c 0%, #2a2418 40%, #141008 100%);
 }
 
 .chapter__bg--dawn {
   background:
-    radial-gradient(ellipse at 50% 30%, rgba(240, 200, 140, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 30%, rgba(232, 200, 160, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(240, 200, 140, 0.12) 0%, transparent 45%),
     linear-gradient(180deg, #1a1420 0%, #2a2030 30%, #14101a 100%);
 }
 
